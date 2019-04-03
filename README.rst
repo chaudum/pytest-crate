@@ -20,7 +20,7 @@ and stops a CrateDB node.
 The CrateDB version can be specified using the ``--crate-version`` option when
 running ``pytest``. By default, the latest stable version of CrateDB is used.
 
-See `<tests/test_crate.py>`_ for further examples.
+See `<tests/test_layer.py>`_ for further examples.
 
 
 .. _pytest: https://docs.pytest.org
