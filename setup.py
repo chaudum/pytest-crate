@@ -1,14 +1,26 @@
+import os
+from pathlib import Path
+
+from pkg_resources.extern.packaging.version import Version
 from setuptools import setup
 
+# a version must be PEP 440 compliant
+__version__ = Version("0.1.dev0")
 
-def read(filename: str) -> str:
-    with open(filename, "r") as fp:
-        return fp.read()
+
+def cwd() -> Path:
+    return Path(os.path.dirname(__file__))
+
+
+def read(path: str) -> str:
+    filepath: Path = cwd() / path
+    with open(filepath.absolute(), "r", encoding="utf-8") as f:
+        return f.read()
 
 
 setup(
     name="pytest-crate",
-    version="0.1",
+    version=str(__version__),
     description="Manages CrateDB instances during your integration tests",
     long_description=read("README.rst"),
     author="Christian Haudum",
@@ -32,12 +44,14 @@ setup(
         ],
     },
     classifiers=[
-        "Development Status :: 3 - Alpha/Unstable",
+        "Development Status :: 3 - Alpha",
         "Framework :: Pytest",
         "License :: OSI Approved :: Apache Software License",
+        "Operating System :: Unix",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3 :: Only",
         "Topic :: Software Development :: Testing",
+        "Topic :: Database",
     ],
 )
