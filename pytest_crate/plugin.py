@@ -27,7 +27,14 @@ class CrateLayer:
     def __repr__(self) -> str:
         return self.name
 
-    def start(self) -> None:
+    def __enter__(self):
+        self._start()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self._stop()
+
+    def _start(self) -> None:
         print(f"Starting CrateDB {self} ...")
         self.tmp = tempfile.mkdtemp()
         settings = {
@@ -41,7 +48,7 @@ class CrateLayer:
         self.node.start()
         print(f"CrateDB {self} started")
 
-    def stop(self) -> None:
+    def _stop(self) -> None:
         print(f"Stopping CrateDB {self} ...")
         self.node.stop()
         shutil.rmtree(self.tmp, ignore_errors=True)
@@ -83,10 +90,8 @@ class CratePlugin:
     @pytest.fixture(scope="session")
     def crate_layer(self) -> CrateLayerFactoryGenerator:
         def layer_factory(name: str, version: str):
-            layer = CrateLayer(name, version)
-            layer.start()
-            yield layer
-            layer.stop()
+            with CrateLayer(name, version) as layer:
+                yield layer
         yield layer_factory
 
     @pytest.fixture(scope="session")
@@ -97,9 +102,8 @@ class CratePlugin:
 
     @pytest.fixture
     def crate_cursor(self, crate) -> Generator[Cursor, None, None]:
-        connection = connect(crate.dsn())
-        yield connection.cursor()
-        connection.close()
+        with connect(crate.dsn()) as connection:
+            yield connection.cursor()
 
     @pytest.fixture
     def crate_execute(self, crate_cursor) -> Generator[Callable, None, None]:
