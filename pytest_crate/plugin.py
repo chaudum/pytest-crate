@@ -22,7 +22,6 @@ class CrateLayer:
     def __init__(self, name: str, version: str) -> None:
         self.name = name
         self.crate_dir = get_crate(version)
-        print(f"name={name} version={version}")
 
     def __repr__(self) -> str:
         return self.name
@@ -56,6 +55,10 @@ class CrateLayer:
 
     def dsn(self) -> str:
         return self.node.http_url
+
+    @property
+    def addresses(self):
+        return self.node.addresses
 
 
 CrateLayerGenerator = Generator[CrateLayer, None, None]

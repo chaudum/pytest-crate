@@ -13,6 +13,15 @@ def custom_crate_b(crate_layer):
 
 def test_crate(crate):
     assert crate.dsn().startswith("http://127.0.0.1:42")
+    assert "http" in crate.addresses
+    assert crate.addresses["http"].host == "127.0.0.1"
+    assert 4300 > crate.addresses["http"].port >= 4200
+    assert "psql" in crate.addresses
+    assert crate.addresses["psql"].host == "127.0.0.1"
+    assert 5500 > crate.addresses["psql"].port >= 5432
+    assert "transport" in crate.addresses
+    assert crate.addresses["transport"].host == "127.0.0.1"
+    assert 4400 > crate.addresses["transport"].port >= 4300
 
 
 def test_cursor(crate_cursor):
