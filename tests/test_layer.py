@@ -1,4 +1,5 @@
 import pytest
+from crate.client import connect
 
 
 @pytest.fixture(scope="session")
@@ -7,8 +8,11 @@ def custom_crate_a(crate_layer):
 
 
 @pytest.fixture(scope="session")
-def custom_crate_b(crate_layer):
-    yield from crate_layer("crate_b", "3.2.x")
+def custom_crate_b(crate_layer, crate_version):
+    settings = {
+        "node.name": "custom-node-name",
+    }
+    yield from crate_layer("crate_b", crate_version, **settings)
 
 
 def test_crate(crate):
@@ -40,6 +44,21 @@ def test_execute(crate_execute, crate_cursor):
     assert crate_cursor.fetchall() == [["test_execute", 1]]
 
 
-def test_custom_crate(custom_crate_a, custom_crate_b):
+def test_custom_crates(custom_crate_a, custom_crate_b):
     assert custom_crate_a.name == "crate_a"
     assert custom_crate_b.name == "crate_b"
+
+
+def test_crate_with_custom_settings(custom_crate_b):
+    assert custom_crate_b.name == "crate_b"
+    assert custom_crate_b.settings == {
+        "node.name": "custom-node-name",
+    }
+    with connect(custom_crate_b.dsn()) as conn:
+        cursor = conn.cursor()
+        for stmt, expected in [
+                ["SELECT name FROM sys.cluster", ["crate_b"]],
+                ["SELECT name FROM sys.nodes", ["custom-node-name"]],
+        ]:
+            cursor.execute(stmt)
+            assert cursor.fetchone() == expected

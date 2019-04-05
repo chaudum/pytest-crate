@@ -19,12 +19,13 @@ class CrateLayer:
     crate_dir: str
     tmp: str
 
-    def __init__(self, name: str, version: str) -> None:
+    def __init__(self, name: str, version: str, **settings) -> None:
         self.name = name
         self.crate_dir = get_crate(version)
+        self.settings = settings
 
     def __repr__(self) -> str:
-        return self.name
+        return f"<CrateDB {self.name}>"
 
     def __enter__(self):
         self._start()
@@ -34,24 +35,26 @@ class CrateLayer:
         self._stop()
 
     def _start(self) -> None:
-        print(f"Starting CrateDB {self} ...")
+        print(f"Starting {self} ...")
         self.tmp = tempfile.mkdtemp()
         settings = {
             "cluster.name": self.name,
+            "node.name": f"{self.name}-0",
             "path.data": self.tmp,
         }
+        settings.update(self.settings)
         env = {"CRATE_HOME": self.crate_dir}
         self.node = CrateNode(
             crate_dir=self.crate_dir, keep_data=False, settings=settings, env=env
         )
         self.node.start()
-        print(f"CrateDB {self} started")
+        print(f"{self} started")
 
     def _stop(self) -> None:
-        print(f"Stopping CrateDB {self} ...")
+        print(f"Stopping {self} ...")
         self.node.stop()
         shutil.rmtree(self.tmp, ignore_errors=True)
-        print(f"CrateDB {self} stopped")
+        print(f"{self} stopped")
 
     def dsn(self) -> str:
         return self.node.http_url
@@ -92,8 +95,8 @@ class CratePlugin:
 
     @pytest.fixture(scope="session")
     def crate_layer(self) -> CrateLayerFactoryGenerator:
-        def layer_factory(name: str, version: str):
-            with CrateLayer(name, version) as layer:
+        def layer_factory(name: str, version: str, **settings):
+            with CrateLayer(name, version, **settings) as layer:
                 yield layer
         yield layer_factory
 
