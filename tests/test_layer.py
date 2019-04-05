@@ -16,17 +16,19 @@ def test_crate(crate):
 
 
 def test_cursor(crate_cursor):
-    crate_cursor.execute("""
-        SELECT 1
-    """)
+    crate_cursor.execute("SELECT 1")
     assert crate_cursor.fetchone() == [1]
 
 
-def test_execute(crate_execute):
-    crate_execute("""
-        CREATE TABLE pytest (name STRING, version STRING)
-    """)
-    assert True
+def test_execute(crate_execute, crate_cursor):
+    for stmt in [
+        "CREATE TABLE pytest (name STRING, version INT)",
+        "INSERT INTO pytest (name, version) VALUES ('test_execute', 1)",
+        "REFRESH TABLE pytest",
+    ]:
+        crate_execute(stmt)
+    crate_cursor.execute("SELECT name, version FROM pytest")
+    assert crate_cursor.fetchall() == [["test_execute", 1]]
 
 
 def test_custom_crate(custom_crate_a, custom_crate_b):
