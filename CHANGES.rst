@@ -5,6 +5,9 @@ Changelog for pytest-crate
 Unreleased
 ==========
 
+2019/04/05 0.2.0
+================
+
 - Allow additional CrateDB settings in the ``crate_layer`` factory fixture
   which are applied on node start.
 
