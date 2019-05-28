@@ -1,3 +1,4 @@
+import logging
 import random
 import shutil
 import string
@@ -11,6 +12,8 @@ from crate.client import connect
 from crate.client.cursor import Cursor
 
 __all__ = ["crate"]
+
+logger = logging.getLogger(__name__)
 
 
 class CrateLayer:
@@ -35,7 +38,7 @@ class CrateLayer:
         self._stop()
 
     def _start(self) -> None:
-        print(f"Starting {self} ...")
+        logger.debug(f"Starting {self} ...")
         self.tmp = tempfile.mkdtemp()
         settings = {
             "cluster.name": self.name,
@@ -48,13 +51,13 @@ class CrateLayer:
             crate_dir=self.crate_dir, keep_data=False, settings=settings, env=env
         )
         self.node.start()
-        print(f"{self} started")
+        logger.debug(f"{self} started")
 
     def _stop(self) -> None:
-        print(f"Stopping {self} ...")
+        logger.debug(f"Stopping {self} ...")
         self.node.stop()
         shutil.rmtree(self.tmp, ignore_errors=True)
-        print(f"{self} stopped")
+        logger.debug(f"{self} stopped")
 
     def dsn(self) -> str:
         return self.node.http_url
