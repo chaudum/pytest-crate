@@ -5,6 +5,9 @@ Changelog for pytest-crate
 Unreleased
 ==========
 
+2019/05/28 0.3.0
+================
+
 - Replace ``print`` statements with ``logging.debug`` statements so that
   retrieving the fixture does not produce output that is captured in doctests.
   This may break existing usages of the fixture in doctests in case the output

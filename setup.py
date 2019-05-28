@@ -5,7 +5,7 @@ from pkg_resources.extern.packaging.version import Version
 from setuptools import setup
 
 # a version must be PEP 440 compliant
-__version__ = Version("0.2.0")
+__version__ = Version("0.3.0")
 
 
 def cwd() -> Path:
