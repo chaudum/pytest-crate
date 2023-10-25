@@ -4,7 +4,7 @@ from crate.client import connect
 
 @pytest.fixture(scope="session")
 def custom_crate_a(crate_layer):
-    yield from crate_layer("crate_a", "3.2.x")
+    yield from crate_layer("crate_a", "5.4.x")
 
 
 @pytest.fixture(scope="session")
