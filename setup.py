@@ -29,13 +29,17 @@ setup(
     packages=["pytest_crate"],
     install_requires=[
         "cr8",
-        "pytest>=4.0",
+        "crate",
+        "pytest>=4.0,<8",
     ],
     extras_require={
         "develop": [
-            "pytest-flake8",
-            "pytest-mypy",
-            "pytest-isort",
+            "flake8<3.8",
+            "mypy<1",
+            "pytest-cov<5",
+            "pytest-flake8<2",
+            "pytest-isort<4",
+            "pytest-mypy<0.11",
         ],
     },
     entry_points={
