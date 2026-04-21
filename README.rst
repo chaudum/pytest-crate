@@ -5,6 +5,11 @@ Pytest CrateDB
 ``pytest-crate`` is a plugin for pytest_ for writing integration tests that
 interact with CrateDB_.
 
+Deprecation warning
+===================
+
+This repository is not actively maintained any more. Please use `crate/pytest-cratedb`_.
+
 Usage
 =====
 
@@ -24,5 +29,6 @@ See `tests/test_layer.py <https://github.com/chaudum/pytest-crate/blob/master/te
 for further examples.
 
 
+.. _crate/pytest-cratedb: https://github.com/crate/pytest-cratedb
 .. _pytest: https://docs.pytest.org
 .. _CrateDB: https://crate.io
